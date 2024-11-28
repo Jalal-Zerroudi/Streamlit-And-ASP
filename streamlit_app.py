@@ -1,11 +1,37 @@
-import streamlit as st
 import os
+import subprocess
 import sys
+
+# Install required packages if they are not installed
+required_packages = [
+    "numpy",
+    "tensorflow",
+    "librosa",
+    "soundfile",
+    "scikit-learn",
+    "matplotlib",
+    "streamlit"
+]
+
+def install_packages(packages):
+    for package in packages:
+        try:
+            __import__(package)
+        except ImportError:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+install_packages(required_packages)
+
+# Now import installed packages
+import streamlit as st
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import io
 import traceback
+
+# Rest of your script goes here
+
 
 # Modify import to handle potential errors
 try:
