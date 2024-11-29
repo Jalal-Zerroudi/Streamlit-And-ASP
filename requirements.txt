@@ -6,3 +6,5 @@ matplotlib
 librosa
 soundfile
 scikit-learn
+typing
+traceback
