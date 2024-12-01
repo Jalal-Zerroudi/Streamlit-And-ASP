@@ -9,3 +9,4 @@ plotly>=5.0.0
 networkx>=2.6
 gdown>=4.4.0
 requests>=2.26.0
+torch>=1.12.0
