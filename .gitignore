@@ -1,0 +1,48 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local environment variables and Streamlit secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Generated project data
+dataset/
+models/
+logs/
+
+# Machine-learning artifacts
+*.h5
+*.keras
+*.ckpt
+*.pt
+*.pth
+*.tflite
+
+# Coverage and build output
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Notebook and editor metadata
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Operating-system and temporary files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
