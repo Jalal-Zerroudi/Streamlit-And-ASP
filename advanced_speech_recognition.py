@@ -126,13 +126,8 @@ class AdvancedSpeechRecognitionModel:
         Returns:
             tf.keras.Model: Compiled neural network model
         """
-        # Modify input shape creation
-        input_shape = (self.config.MODEL['max_pad_len'], self.config.MODEL['max_pad_len'], 1)
-
         model = models.Sequential([
-            layers.Input(shape=(None, None, 1)),
-            # Input layer with explicitly defined input shape
-            layers.Input(shape=input_shape),
+            layers.Input(shape=self.config.MODEL['input_shape']),
 
             # First Convolutional Block with Residual Connection
             layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
