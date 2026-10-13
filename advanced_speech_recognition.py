@@ -56,12 +56,13 @@ class AdvancedSpeechRecognitionModel:
             else:
                 print("❗ No GPU detected. Falling back to CPU.")
 
-    def extract_features(self, audio_path):
+    def extract_features(self, audio_path, augment=False):
         """
         Advanced feature extraction with multiple augmentation techniques
 
         Args:
             audio_path (str): Path to the audio file
+            augment (bool): Whether to apply random audio augmentation
 
         Returns:
             np.array: Enhanced spectrogram features
@@ -74,11 +75,11 @@ class AdvancedSpeechRecognitionModel:
             if audio.ndim > 1:
                 audio = audio.mean(axis=1)
 
-            # Multiple augmentation strategies
-            augmented_audio = self._apply_audio_augmentations(audio)
+            # Apply random augmentation only when explicitly requested for training
+            processed_audio = self._apply_audio_augmentations(audio) if augment else audio
 
             # Generate spectrogram with more advanced parameters
-            spectrogram = librosa.stft(augmented_audio,
+            spectrogram = librosa.stft(processed_audio,
                                        n_fft=2048,
                                        hop_length=512)
             spectrogram_db = librosa.amplitude_to_db(abs(spectrogram), ref=np.max)
@@ -280,7 +281,7 @@ class AdvancedSpeechRecognitionModel:
 
                 try:
                     # Extract features
-                    features = self.extract_features(file_path)
+                    features = self.extract_features(file_path, augment=True)
 
                     if features is not None:
                         # Reshape features for model input
