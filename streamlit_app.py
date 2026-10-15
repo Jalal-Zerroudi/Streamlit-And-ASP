@@ -534,6 +534,7 @@ class SpeechRecognitionApp:
                 
                 # Store in session state
                 st.session_state.loaded_model_path = model_path
+                st.session_state.model_instance = None
                 st.success(f"Model {uploaded_model.name} uploaded successfully!")
 
         # Google Drive upload method
@@ -561,6 +562,7 @@ class SpeechRecognitionApp:
                             
                             # Store in session state
                             st.session_state.loaded_model_path = model_path
+                            st.session_state.model_instance = None
                             st.success("Model downloaded successfully!")
 
                     except Exception as e:
@@ -583,6 +585,7 @@ class SpeechRecognitionApp:
                             
                             # Store in session state
                             st.session_state.loaded_model_path = model_path
+                            st.session_state.model_instance = None
                             st.success("Model downloaded successfully!")
 
                     except Exception as e:
