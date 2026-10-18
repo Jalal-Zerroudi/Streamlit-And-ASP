@@ -89,6 +89,17 @@ The dataset directory and its class subdirectories must match the values expecte
 3. Upload a WAV recording or use the optional three-second microphone recorder.
 4. Select **Predict Digit** to view the predicted class and confidence.
 
+### Audio and model compatibility
+
+The current preprocessing in `advanced_speech_recognition.py` reads audio with SoundFile, averages stereo channels to mono, and computes a decibel STFT spectrogram using `n_fft=2048` and `hop_length=512`. With the default `max_pad_len=173`, each sample has shape `(1025, 173, 1)` before adding the batch dimension. Longer spectrograms are truncated; shorter ones are padded with zeros.
+
+- **Sample rate:** the file's sample rate is read but no resampling is performed. Prepare training and prediction files at the same rate. The built-in microphone recorder uses **44,100 Hz**; recordings from it may not match a model trained at another rate.
+- **Class order:** training assigns labels by the order of `Config.DATASET['subdirs']`, currently `d0` through `d9`. Prediction displays the output index selected by `argmax`, so a loaded model must use the same digit-to-index mapping.
+- **Augmentation:** random noise and time stretching are enabled during dataset loading for training, but disabled by default when extracting prediction features.
+- **Confidence:** the displayed confidence is the largest model output value, not a guarantee that the predicted digit is correct.
+
+When importing a pretrained model, keep its sample rate, feature-extraction settings, padding length, and class order alongside the model file. The current H5-saving method saves the model itself, not this preprocessing metadata.
+
 ### Inspect a model
 
 Open **Model Information**, then upload or download a supported model. The application attempts TensorFlow/Keras loading first and then PyTorch loading, and displays the information supported by the detected model type.
