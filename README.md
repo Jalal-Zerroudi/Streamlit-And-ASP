@@ -109,3 +109,19 @@ Open **Model Information**, then upload or download a supported model. The appli
 - Uploaded and downloaded models are stored locally in `models/` while the application is running.
 - Recorded or uploaded prediction audio is written to `temp_audio.wav`.
 - Training can be computationally intensive; duration depends on dataset size, selected parameters, and available hardware.
+
+## Local recording and audio storage
+
+- **Microphone location:** `sounddevice.rec` runs in the Python process, so
+  **Record Audio** uses the microphone attached to the machine hosting Streamlit,
+  not the visitor's browser microphone. On a remote or headless server, prefer
+  **Upload WAV File**; browser microphone permission alone does not enable this recorder.
+- **Shared temporary file:** uploads and recordings both overwrite
+  `temp_audio.wav` in the process working directory. The prediction button can
+  reuse that file whenever it exists, including audio left by an earlier session.
+  Upload or record a fresh sample before predicting.
+- **Deployment caution:** this filename is not isolated per user. Concurrent
+  sessions can overwrite or predict each other's audio; use the current app as
+  a single-user local demo, not as an isolated multi-user audio service.
+- **Retention:** the application has no automatic cleanup for `temp_audio.wav`.
+  After stopping the app, remove that file if the recording should not remain on disk.
