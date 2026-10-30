@@ -107,7 +107,7 @@ Open **Model Information**, then upload or download a supported model. The appli
 ## Notes
 
 - Uploaded and downloaded models are stored locally in `models/` while the application is running.
-- Recorded or uploaded prediction audio is written to `temp_audio.wav`.
+- Recorded or uploaded prediction audio is written to a unique temporary WAV file for the current Streamlit session.
 - Training can be computationally intensive; duration depends on dataset size, selected parameters, and available hardware.
 
 ## Local recording and audio storage
@@ -116,12 +116,11 @@ Open **Model Information**, then upload or download a supported model. The appli
   **Record Audio** uses the microphone attached to the machine hosting Streamlit,
   not the visitor's browser microphone. On a remote or headless server, prefer
   **Upload WAV File**; browser microphone permission alone does not enable this recorder.
-- **Shared temporary file:** uploads and recordings both overwrite
-  `temp_audio.wav` in the process working directory. The prediction button can
-  reuse that file whenever it exists, including audio left by an earlier session.
-  Upload or record a fresh sample before predicting.
-- **Deployment caution:** this filename is not isolated per user. Concurrent
-  sessions can overwrite or predict each other's audio; use the current app as
-  a single-user local demo, not as an isolated multi-user audio service.
-- **Retention:** the application has no automatic cleanup for `temp_audio.wav`.
-  After stopping the app, remove that file if the recording should not remain on disk.
+- **Session isolation:** uploads and recordings use a random filename in the
+  operating system's temporary directory. Concurrent Streamlit sessions no
+  longer overwrite or predict each other's audio.
+- **Session reuse:** the prediction button can reuse the current session's file
+  whenever it exists. Upload or record a fresh sample before predicting a new digit.
+- **Retention:** the application does not automatically remove the per-session
+  WAV file. Clear the operating system's temporary files when recordings should
+  not remain on disk.

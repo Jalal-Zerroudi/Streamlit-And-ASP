@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 import sys
+import tempfile
+import uuid
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -138,6 +140,11 @@ class SpeechRecognitionApp:
         if 'model' not in st.session_state:
             st.session_state.model = None
             st.session_state.model_loaded = False
+        if 'audio_temp_path' not in st.session_state:
+            unique_name = f"speech-recognition-{uuid.uuid4().hex}.wav"
+            st.session_state.audio_temp_path = os.path.join(
+                tempfile.gettempdir(), unique_name
+            )
 
     def run(self):
         """
@@ -599,8 +606,8 @@ class SpeechRecognitionApp:
                 ["Upload WAV File", "Record Audio"]
             )
 
-            # Persistent audio file path
-            TEMP_AUDIO_PATH = "temp_audio.wav"
+            # Keep prediction audio isolated from other Streamlit sessions.
+            TEMP_AUDIO_PATH = st.session_state.audio_temp_path
 
             if input_method == "Upload WAV File":
                 uploaded_audio = st.file_uploader(
