@@ -20,7 +20,7 @@ class AdvancedSpeechRecognitionModel:
         Args:
             config (class): Configuration class with model parameters
         """
-        self.config = config
+        self.config = config.isolated()
         self.model = None
         self.label_encoder = LabelEncoder()
         self.history = None

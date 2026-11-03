@@ -1,5 +1,6 @@
 #config.py
 import os
+from copy import deepcopy
 
 class Config:
     """Centralized configuration management for the Speech Recognition Project"""
@@ -45,6 +46,21 @@ class Config:
         'log_dir': os.path.join(BASE_DIR, 'logs'),
         'tensorboard_logs': True
     }
+
+    @classmethod
+    def isolated(cls):
+        """Return a config subclass with independent mutable settings."""
+        return type(
+            f"{cls.__name__}Instance",
+            (cls,),
+            {
+                "DATASET": deepcopy(cls.DATASET),
+                "MODEL": deepcopy(cls.MODEL),
+                "PERFORMANCE": deepcopy(cls.PERFORMANCE),
+                "TRAINING": deepcopy(cls.TRAINING),
+                "LOGGING": deepcopy(cls.LOGGING),
+            },
+        )
 
     @classmethod
     def validate_paths(cls):
