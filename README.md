@@ -107,7 +107,7 @@ Open **Model Information**, then upload or download a supported model. The appli
 ## Notes
 
 - Each model instance receives an isolated copy of the mutable configuration, so dataset paths and training overrides do not leak between Streamlit sessions.
-- Uploaded and downloaded models are stored locally in `models/` while the application is running.
+- Uploaded and downloaded models are stored in a unique temporary directory for the current Streamlit session, preventing concurrent sessions from overwriting one another. These directories are not removed automatically; clear the operating system's temporary files when model artifacts should not remain on disk.
 - Recorded or uploaded prediction audio is written to a unique temporary WAV file for the current Streamlit session.
 - Training can be computationally intensive; duration depends on dataset size, selected parameters, and available hardware.
 

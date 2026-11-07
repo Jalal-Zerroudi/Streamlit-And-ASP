@@ -145,6 +145,16 @@ class SpeechRecognitionApp:
             st.session_state.audio_temp_path = os.path.join(
                 tempfile.gettempdir(), unique_name
             )
+        if 'model_temp_dir' not in st.session_state:
+            st.session_state.model_temp_dir = tempfile.mkdtemp(
+                prefix="speech-recognition-models-"
+            )
+
+    @staticmethod
+    def _session_model_path(filename):
+        """Return a session-isolated path for an uploaded or downloaded model."""
+        safe_name = os.path.basename(filename)
+        return os.path.join(st.session_state.model_temp_dir, safe_name)
 
     def run(self):
         """
@@ -276,11 +286,8 @@ class SpeechRecognitionApp:
             )
 
             if uploaded_model is not None:
-                # Ensure models directory exists
-                os.makedirs("models", exist_ok=True)
-                
-                # Save the uploaded file
-                model_path = os.path.join("models", uploaded_model.name)
+                # Save the uploaded file in this session's temporary directory.
+                model_path = self._session_model_path(uploaded_model.name)
                 with open(model_path, "wb") as f:
                     f.write(uploaded_model.getbuffer())
                 
@@ -305,8 +312,7 @@ class SpeechRecognitionApp:
                         download_url = f"https://drive.google.com/uc?id={file_id}"
                         
                         with st.spinner("Downloading model..."):
-                            os.makedirs("models", exist_ok=True)
-                            model_path = os.path.join("models", "downloaded_model.h5")
+                            model_path = self._session_model_path("downloaded_model.h5")
                             gdown.download(download_url, model_path, quiet=False)
                             
                             st.success("Model downloaded successfully!")
@@ -533,8 +539,7 @@ class SpeechRecognitionApp:
             )
 
             if uploaded_model is not None:
-                os.makedirs("models", exist_ok=True)
-                model_path = os.path.join("models", uploaded_model.name)
+                model_path = self._session_model_path(uploaded_model.name)
                 
                 with open(model_path, "wb") as f:
                     f.write(uploaded_model.getbuffer())
@@ -563,8 +568,7 @@ class SpeechRecognitionApp:
                         download_url = f"https://drive.google.com/uc?id={file_id}"
                         
                         with st.spinner("Downloading model..."):
-                            os.makedirs("models", exist_ok=True)
-                            model_path = os.path.join("models", "downloaded_model.h5")
+                            model_path = self._session_model_path("downloaded_model.h5")
                             gdown.download(download_url, model_path, quiet=False)
                             
                             # Store in session state
@@ -586,8 +590,7 @@ class SpeechRecognitionApp:
                         with st.spinner("Downloading model..."):
                             download_url = f"https://drive.google.com/uc?id={file_id}"
                             
-                            os.makedirs("models", exist_ok=True)
-                            model_path = os.path.join("models", "downloaded_model.h5")
+                            model_path = self._session_model_path("downloaded_model.h5")
                             gdown.download(download_url, model_path, quiet=False)
                             
                             # Store in session state
