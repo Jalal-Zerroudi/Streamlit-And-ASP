@@ -70,6 +70,16 @@ streamlit run streamlit_app.py
 
 Streamlit will print the local application URL in the terminal.
 
+## Tests
+
+The configuration-isolation regression test uses Python's standard-library `unittest` runner and does not require a dataset or trained model:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+It verifies that dataset paths, class lists, and training overrides made for one model configuration do not leak into another session or mutate the shared defaults.
+
 ## Usage
 
 ### Train a model
