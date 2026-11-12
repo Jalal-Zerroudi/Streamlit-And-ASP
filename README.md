@@ -82,6 +82,33 @@ It verifies that dataset paths, class lists, and training overrides made for one
 
 ## Usage
 
+### Prepare the dataset
+
+The loader reads audio files directly from the ten class directories configured
+in `Config.DATASET['subdirs']`. With the default configuration, use this layout:
+
+```text
+dataset/
+├── d0/
+│   ├── sample-001.wav
+│   └── sample-002.wav
+├── d1/
+│   └── sample-001.wav
+├── ...
+└── d9/
+    └── sample-001.wav
+```
+
+Point **Dataset Path** at the directory containing `d0` through `d9`, not at an
+individual digit directory. Files nested below those class directories are not
+scanned. The current loader matches the configured `.wav` suffix exactly, so use
+lowercase `.wav` filenames rather than `.WAV`.
+
+Training uses a stratified train/test split. Include examples for every digit and
+enough files per class for the selected test proportion to place samples from each
+class in both splits. If a class directory is missing or empty, the application
+prints a warning; training stops when no usable audio can be loaded.
+
 ### Train a model
 
 1. Open **Train Model**.
@@ -135,3 +162,4 @@ Open **Model Information**, then upload or download a supported model. The appli
 - **Retention:** the application does not automatically remove the per-session
   WAV file. Clear the operating system's temporary files when recordings should
   not remain on disk.
+
