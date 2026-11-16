@@ -15,6 +15,8 @@ import plotly.graph_objects as go
 import plotly.express as px
 import networkx as nx
 
+from drive_utils import extract_google_drive_file_id
+
 # Modify import to handle potential errors
 try:
     from advanced_speech_recognition import AdvancedSpeechRecognitionModel
@@ -155,6 +157,25 @@ class SpeechRecognitionApp:
         """Return a session-isolated path for an uploaded or downloaded model."""
         safe_name = os.path.basename(filename)
         return os.path.join(st.session_state.model_temp_dir, safe_name)
+
+    def _download_drive_model(self, reference, filename="downloaded_model.h5"):
+        """Download a Drive model without reusing a stale session file."""
+        file_id = extract_google_drive_file_id(reference)
+        model_path = self._session_model_path(filename)
+        if os.path.exists(model_path):
+            os.remove(model_path)
+
+        download_url = f"https://drive.google.com/uc?id={file_id}"
+        try:
+            downloaded_path = gdown.download(download_url, model_path, quiet=False)
+            if not downloaded_path or not os.path.isfile(model_path) or os.path.getsize(model_path) == 0:
+                raise RuntimeError("Google Drive did not return a model file.")
+        except Exception:
+            if os.path.exists(model_path):
+                os.remove(model_path)
+            raise
+
+        return model_path
 
     def run(self):
         """
@@ -308,17 +329,26 @@ class SpeechRecognitionApp:
 
                 if drive_link and st.button("Download from Drive"):
                     try:
-                        file_id = drive_link.split('/d/')[1].split('/')[0]
-                        download_url = f"https://drive.google.com/uc?id={file_id}"
-                        
                         with st.spinner("Downloading model..."):
-                            model_path = self._session_model_path("downloaded_model.h5")
-                            gdown.download(download_url, model_path, quiet=False)
-                            
+                            model_path = self._download_drive_model(drive_link)
                             st.success("Model downloaded successfully!")
 
                     except Exception as e:
                         st.error(f"Error processing link: {e}")
+
+            else:
+                file_id = st.text_input(
+                    "Enter Google Drive File ID",
+                    placeholder="1234abcd_your_file_id_here"
+                )
+
+                if file_id and st.button("Download from Drive"):
+                    try:
+                        with st.spinner("Downloading model..."):
+                            model_path = self._download_drive_model(file_id)
+                            st.success("Model downloaded successfully!")
+                    except Exception as e:
+                        st.error(f"Error downloading file: {e}")
 
         # If a model path is available, load and display model information
         if model_path and os.path.exists(model_path):
@@ -564,12 +594,8 @@ class SpeechRecognitionApp:
 
                 if drive_link and st.button("Download from Drive"):
                     try:
-                        file_id = drive_link.split('/d/')[1].split('/')[0]
-                        download_url = f"https://drive.google.com/uc?id={file_id}"
-                        
                         with st.spinner("Downloading model..."):
-                            model_path = self._session_model_path("downloaded_model.h5")
-                            gdown.download(download_url, model_path, quiet=False)
+                            model_path = self._download_drive_model(drive_link)
                             
                             # Store in session state
                             st.session_state.loaded_model_path = model_path
@@ -588,10 +614,7 @@ class SpeechRecognitionApp:
                 if st.button("Download from Drive") and file_id:
                     try:
                         with st.spinner("Downloading model..."):
-                            download_url = f"https://drive.google.com/uc?id={file_id}"
-                            
-                            model_path = self._session_model_path("downloaded_model.h5")
-                            gdown.download(download_url, model_path, quiet=False)
+                            model_path = self._download_drive_model(file_id)
                             
                             # Store in session state
                             st.session_state.loaded_model_path = model_path

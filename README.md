@@ -141,6 +141,11 @@ When importing a pretrained model, keep its sample rate, feature-extraction sett
 
 Open **Model Information**, then upload or download a supported model. The application attempts TensorFlow/Keras loading first and then PyTorch loading, and displays the information supported by the detected model type.
 
+Google Drive downloads accept either a standard share link or the raw file ID.
+The app validates the reference and confirms that a non-empty model file was
+downloaded before reporting success; a failed download cannot silently reuse an
+older model from the same session.
+
 ## Notes
 
 - Each model instance receives an isolated copy of the mutable configuration, so dataset paths and training overrides do not leak between Streamlit sessions.
