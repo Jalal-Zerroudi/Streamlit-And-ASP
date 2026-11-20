@@ -72,13 +72,18 @@ Streamlit will print the local application URL in the terminal.
 
 ## Tests
 
-The configuration-isolation regression test uses Python's standard-library `unittest` runner and does not require a dataset or trained model:
+The regression suite uses Python's standard-library `unittest` runner and does not require a dataset or trained model:
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-It verifies that dataset paths, class lists, and training overrides made for one model configuration do not leak into another session or mutate the shared defaults.
+The current suite covers:
+
+- `tests/test_config.py`: verifies that dataset paths, class lists, and training overrides made for one model configuration do not leak into another session or mutate the shared defaults;
+- `tests/test_drive_utils.py`: verifies raw Drive file IDs, standard share links, and query-style links, and rejects foreign-host URLs or malformed Drive links.
+
+A successful run currently reports six tests. If a new helper or regression fix is added, include its tests in this discovery command rather than documenting a separate invocation.
 
 ## Usage
 
